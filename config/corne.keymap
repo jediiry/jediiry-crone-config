@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2020 The ZMK Contributors
  * SPDX-License-Identifier: MIT
  */
 
@@ -23,6 +24,20 @@
             bindings = <&kp>, <&kp>;
         };
 
+        sticky_lower: sticky_lower {
+            compatible = "zmk,behavior-sticky-key";
+            label = "Sticky Lower";
+            #binding-cells = <1>;
+            bindings = <&mo 1>;
+        };
+
+        sticky_raise: sticky_raise {
+            compatible = "zmk,behavior-sticky-key";
+            label = "Sticky Raise";
+            #binding-cells = <1>;
+            bindings = <&mo 2>;
+        };
+
         lwr_ht: lwr_ht {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <0>;
@@ -38,20 +53,6 @@
             flavor = "hold-preferred";
             bindings = <&mo 2>, <&kp RALT>;
         };
-
-        sticky_lower: sticky_lower {
-            compatible = "zmk,behavior-sticky-key";
-            #binding-cells = <0>;
-            label = "Sticky Lower";
-            bindings = <&mo 1>;
-        };
-
-        sticky_raise: sticky_raise {
-            compatible = "zmk,behavior-sticky-key";
-            #binding-cells = <0>;
-            label = "Sticky Raise";
-            bindings = <&mo 2>;
-        };
     };
 
     keymap {
@@ -60,43 +61,51 @@
         default_layer {
             display-name = "Base";
             bindings = <
-                AS(Q) AS(W) AS(E) AS(R) AS(T)         AS(Y)    AS(U)     AS(I)     AS(O)     AS(P)
-                AS(A) AS(S) AS(D) AS(F) AS(G)         AS(H)    AS(J)     AS(K)     AS(L)     AS(SQT)
-                AS(Z) AS(X) AS(C) AS(V) AS(B)         AS(N)    AS(M)     &kp LCTL  &kp RALT  AS(DOT)
-                            &kp LGUI  &lwr_ht &kp SPACE     AS(RET)  &rse_ht  &kp BSPC
+                AS(Q)   AS(W)   AS(E)   AS(R)   AS(T)       AS(Y)   AS(U)   AS(I)     AS(O)     AS(P)
+                AS(A)   AS(S)   AS(D)   AS(F)   AS(G)       AS(H)   AS(J)   AS(K)     AS(L)     AS(SQT)
+                AS(Z)   AS(X)   AS(C)   AS(V)   AS(B)       AS(N)   AS(M)   &kp LCTL  &kp RALT  AS(DOT)
+                        &kp LGUI  &lwr_ht &kp SPACE        AS(RET)  &rse_ht &kp BSPC
             >;
         };
 
         lower_layer {
             display-name = "Lower";
             bindings = <
-                &kp EXCL     &kp AT     &kp HASH   &kp DLLR  &kp PRCNT     &kp CARET &kp AMPS  &kp KP_MULTIPLY &kp LPAR   &kp RPAR
-                &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4 &kp LEFT  &kp DOWN &kp UP        &kp RIGHT  &trans
-                &bt BT_CLR   &trans     &trans     &trans     &trans        &trans    &trans    &trans       &trans     &trans
-                               &kp LGUI  &sticky_lower &kp SPACE    AS(RET)   &sticky_raise &kp BSPC
+                &kp EXCL     &kp AT       &kp HASH     &kp DLLR     &kp PRCNT     &kp CARET  &kp AMPS  &kp KP_MULTIPLY &kp LPAR   &kp RPAR
+                &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4  &kp LEFT   &kp DOWN  &kp UP          &kp RIGHT  &trans
+                &bt BT_CLR   &trans       &trans       &trans       &trans        &trans     &trans    &trans          &trans     &trans
+                                &kp LGUI   &trans       &kp SPACE    AS(RET)       &kp ESC    &kp TAB
             >;
         };
 
         raise_layer {
             display-name = "Raise";
             bindings = <
-                AS(N1)    AS(N2)    AS(N3)    AS(N4)    AS(N5)        AS(N6)    AS(N7)    AS(N8)    AS(N9)   AS(N0)
-                AS(MINUS) AS(EQUAL) &kp LBRC  &kp LBKT  &kp LPAR      &kp RPAR  &kp RBKT  &kp RBRC  AS(FSLH) AS(BSLH)
-                AS(GRAVE) &trans    &trans    AS(COMMA) &kp COLON     &kp SEMI  AS(DOT)   &kp LCTRL &kp RALT &trans
-                               &kp LGUI  &sticky_lower &kp SPACE     AS(RET)   &sticky_raise &kp TAB
+                AS(N1)    AS(N2)    AS(N3)    AS(N4)    AS(N5)       AS(N6)    AS(N7)    AS(N8)    AS(N9)   AS(N0)
+                AS(MINUS) AS(EQUAL) &kp LBRC  &kp LBKT  &kp LPAR     &kp RPAR  &kp RBKT  &kp RBRC  AS(FSLH) AS(BSLH)
+                AS(GRAVE) &trans    &trans    AS(COMMA) &kp COLON    &kp SEMI  AS(DOT)   &kp LCTRL &kp RALT &trans
+                            &kp LGUI  &kp ESC  &kp SPACE  AS(RET)    &trans    &kp TAB
             >;
         };
 
-        extra_1 {
-            status = "reserved";
+        extra_1 { status = "reserved"; };
+        extra_2 { status = "reserved"; };
+        extra_3 { status = "reserved"; };
+    };
+
+    combos {
+        compatible = "zmk,combos";
+
+        double_tap_lwr {
+            timeout-ms = <200>;
+            key-positions = <31 31>; // lwr_ht index (assumed correct)
+            bindings = <&sticky_lower 1>;
         };
 
-        extra_2 {
-            status = "reserved";
-        };
-
-        extra_3 {
-            status = "reserved";
+        double_tap_rse {
+            timeout-ms = <200>;
+            key-positions = <34 34>; // rse_ht index (assumed correct)
+            bindings = <&sticky_raise 2>;
         };
     };
 };
